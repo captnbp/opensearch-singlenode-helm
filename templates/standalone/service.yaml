@@ -1,0 +1,62 @@
+{{- if (include "opensearch.cluster_manager.enabled" .) }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "opensearch.cluster_manager.fullname" . }}
+  namespace: {{ include "common.names.namespace" . | quote }}
+  labels: {{- include "common.labels.standard" . | nindent 4 }}
+    app.kubernetes.io/component: opensearch
+    {{- if .Values.commonLabels }}
+    {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
+    {{- end }}
+  annotations:
+    {{- if .Values.commonAnnotations }}
+    {{- include "common.tplvalues.render" (dict "value" .Values.commonAnnotations "context" $) | nindent 4 }}
+    {{- end }}
+    {{- if .Values.cluster_manager.service.annotations }}
+    {{- include "common.tplvalues.render" ( dict "value" .Values.cluster_manager.service.annotations "context" $) | nindent 4 }}
+    {{- end }}
+spec:
+  type: {{ .Values.cluster_manager.service.type }}
+  {{- if and .Values.cluster_manager.service.clusterIP (eq .Values.cluster_manager.service.type "ClusterIP") }}
+  clusterIP: {{ .Values.cluster_manager.service.clusterIP }}
+  {{- end }}
+  {{- if or (eq .Values.cluster_manager.service.type "LoadBalancer") (eq .Values.cluster_manager.service.type "NodePort") }}
+  externalTrafficPolicy: {{ .Values.cluster_manager.service.externalTrafficPolicy | quote }}
+  {{- end }}
+  {{- if and (eq .Values.cluster_manager.service.type "LoadBalancer") .Values.cluster_manager.service.loadBalancerSourceRanges }}
+  loadBalancerSourceRanges: {{- toYaml .Values.cluster_manager.service.loadBalancerSourceRanges | nindent 4 }}
+  {{- end }}
+  {{- if (and (eq .Values.cluster_manager.service.type "LoadBalancer") (not (empty .Values.cluster_manager.service.loadBalancerIP))) }}
+  loadBalancerIP: {{ .Values.cluster_manager.service.loadBalancerIP }}
+  {{- end }}
+  {{- if .Values.cluster_manager.service.sessionAffinity }}
+  sessionAffinity: {{ .Values.cluster_manager.service.sessionAffinity }}
+  {{- end }}
+  {{- if .Values.cluster_manager.service.sessionAffinityConfig }}
+  sessionAffinityConfig: {{- include "common.tplvalues.render" (dict "value" .Values.cluster_manager.service.sessionAffinityConfig "context" $) | nindent 4 }}
+  {{- end }}
+  ipFamilyPolicy: {{ .Values.cluster_manager.service.ipFamilyPolicy }}
+  ports:
+    - name: tcp-rest-api
+      port: {{ .Values.cluster_manager.service.ports.restAPI }}
+      targetPort: rest-api
+      {{- if and (or (eq .Values.cluster_manager.service.type "NodePort") (eq .Values.cluster_manager.service.type "LoadBalancer")) (not (empty .Values.cluster_manager.service.nodePorts.restAPI)) }}
+      nodePort: {{ .Values.cluster_manager.service.nodePorts.restAPI }}
+      {{- else if eq .Values.cluster_manager.service.type "ClusterIP" }}
+      nodePort: null
+      {{- end }}
+    - name: tcp-transport
+      port: {{ .Values.cluster_manager.service.ports.transport }}
+      targetPort: transport
+      {{- if and (or (eq .Values.cluster_manager.service.type "NodePort") (eq .Values.cluster_manager.service.type "LoadBalancer")) (not (empty .Values.cluster_manager.service.nodePorts.transport)) }}
+      nodePort: {{ .Values.cluster_manager.service.nodePorts.transport }}
+      {{- else if eq .Values.cluster_manager.service.type "ClusterIP" }}
+      nodePort: null
+      {{- end }}
+    {{- if .Values.cluster_manager.service.extraPorts }}
+    {{- include "common.tplvalues.render" (dict "value" .Values.cluster_manager.service.extraPorts "context" $) | nindent 4 }}
+    {{- end }}
+  selector: {{- include "common.labels.matchLabels" . | nindent 4 }}
+    app.kubernetes.io/component: cluster_manager
+{{- end }}

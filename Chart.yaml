@@ -1,0 +1,40 @@
+annotations:
+  category: Analytics
+  artifacthub.io/images: |
+    - name: opensearch
+      image: opensearchproject/opensearch:2.6.0
+    - name: elasticsearch-exporter
+      image: bitnami/elasticsearch-exporter:1.5.0-debian-11-r63
+  artifacthub.io/license: MIT
+  artifacthub.io/recommendations: |
+    - url: https://artifacthub.io/packages/helm/captnbp/opensearch-dashboards
+  artifacthub.io/changes: |
+    - kind: changed
+      description: Upgrade Opensearch to 2.6.0
+apiVersion: v2
+appVersion: 2.6.0
+dependencies:
+  - name: common
+    repository: https://charts.bitnami.com/bitnami
+    tags:
+      - bitnami-common
+    version: 1.x.x
+description: OpenSearch is a distributed search and analytics engine. It is used for web search, log monitoring, and real-time analytics. Ideal for Big Data applications.
+home: https://github.com/captnbp/helm-charts/tree/master/charts/opensearch
+icon: https://opensearch.org/assets/brand/PNG/Mark/opensearch_mark_default.png
+keywords:
+  - opensearch
+  - dashboards
+  - opensearch-dashboards
+  - analytics
+  - monitoring
+  - metrics
+  - logs
+maintainers:
+  - email: benoit.pourre@gmail.com
+    name: Benoît Pourre
+name: opensearch
+sources:
+  - https://github.com/opensearch-project
+  - https://opensearch.org/
+version: 2.1.9
