@@ -1,11 +1,11 @@
-{{- if and (include "opensearch.cluster_manager.enabled" .) .Values.cluster_manager.autoscaling.enabled }}
+{{- if and (include "opensearch.opensearch.enabled" .) .Values.opensearch.autoscaling.enabled }}
 apiVersion: {{ include "common.capabilities.hpa.apiVersion" ( dict "context" $ ) }}
 kind: HorizontalPodAutoscaler
 metadata:
-  name: {{ include "opensearch.cluster_manager.fullname" . }}
+  name: {{ include "common.names.fullname" . }}
   namespace: {{ include "common.names.namespace" . | quote }}
   labels: {{- include "common.labels.standard" . | nindent 4 }}
-    app.kubernetes.io/component: cluster_manager
+    app.kubernetes.io/component: opensearch
     {{- if .Values.commonLabels }}
     {{- include "common.tplvalues.render" (dict "value" .Values.commonLabels "context" $) | nindent 4 }}
     {{- end }}
@@ -16,32 +16,32 @@ spec:
   scaleTargetRef:
     apiVersion: {{ template "common.capabilities.statefulset.apiVersion" . }}
     kind: StatefulSet
-    name: {{ include "opensearch.cluster_manager.fullname" . }}
-  minReplicas: {{ .Values.cluster_manager.autoscaling.minReplicas }}
-  maxReplicas: {{ .Values.cluster_manager.autoscaling.maxReplicas }}
+    name: {{ include "common.names.fullname" . }}
+  minReplicas: {{ .Values.opensearch.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.opensearch.autoscaling.maxReplicas }}
   metrics:
-    {{- if .Values.cluster_manager.autoscaling.targetCPU }}
+    {{- if .Values.opensearch.autoscaling.targetCPU }}
     - type: Resource
       resource:
         name: cpu
         {{- if semverCompare "<1.23-0" (include "common.capabilities.kubeVersion" .) }}
-        targetAverageUtilization: {{ .Values.cluster_manager.autoscaling.targetCPU }}
+        targetAverageUtilization: {{ .Values.opensearch.autoscaling.targetCPU }}
         {{- else }}
         target:
           type: Utilization
-          averageUtilization: {{ .Values.cluster_manager.autoscaling.targetCPU }}
+          averageUtilization: {{ .Values.opensearch.autoscaling.targetCPU }}
         {{- end }}
     {{- end }}
-    {{- if .Values.cluster_manager.autoscaling.targetMemory }}
+    {{- if .Values.opensearch.autoscaling.targetMemory }}
     - type: Resource
       resource:
         name: memory
         {{- if semverCompare "<1.23-0" (include "common.capabilities.kubeVersion" .) }}
-        targetAverageUtilization: {{ .Values.cluster_manager.autoscaling.targetMemory }}
+        targetAverageUtilization: {{ .Values.opensearch.autoscaling.targetMemory }}
         {{- else }}
         target:
           type: Utilization
-          averageUtilization: {{ .Values.cluster_manager.autoscaling.targetMemory }}
+          averageUtilization: {{ .Values.opensearch.autoscaling.targetMemory }}
         {{- end }}
     {{- end }}
 {{- end }}

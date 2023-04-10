@@ -1,8 +1,8 @@
 {{- if .Values.securityadmin.enabled }}
 {{- $releaseNamespace := .Release.Namespace }}
 {{- $clusterDomain := .Values.clusterDomain }}
-{{- $fullname := include "opensearch.cluster_manager.fullname" . }}
-{{- $serviceName := include "opensearch.cluster_manager.fullname" . }}
+{{- $fullname := include "common.names.fullname" . }}
+{{- $serviceName := include "common.names.fullname" . }}
 ---
 apiVersion: batch/v1
 kind: Job
@@ -16,7 +16,7 @@ metadata:
     ## Istio Labels: https://istio.io/docs/ops/deployment/requirements/
     app: securityadmin
   annotations:
-    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook": post-install
     "helm.sh/hook-weight": "1"
     {{- if .Values.commonAnnotations }}
     {{- include "common.tplvalues.render" (dict "value" .Values.commonAnnotations "context" $) | nindent 4 }}

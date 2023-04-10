@@ -35,7 +35,7 @@ data:
       -cacert /usr/share/opensearch/config/ca.crt \
       -cert /usr/share/opensearch/config/tls.crt \
       -key /usr/share/opensearch/config/tls.key \
-      -h {{ printf "%s-hl" (include "opensearch.cluster_manager.fullname" .) | trunc 63 | trimSuffix "-" }}
+      -h {{ printf "%s-hl" (include "common.names.fullname" .) | trunc 63 | trimSuffix "-" }}
 
   readiness-probe-script.sh: |-
     #!/usr/bin/env bash
@@ -186,6 +186,10 @@ data:
         setS3Credentials
         {{- end }}
 
+        {{- if or .Values.extraSecretsKeystore.existingSecret .Values.extraSecretsKeystore.secrets }}
+        setExtraSecrets
+        {{- end }}
+
         # Enable job control so we receive SIGCHLD when a child process terminates
         set -m
 
@@ -236,8 +240,8 @@ data:
 
     {{- $releaseNamespace := .Release.Namespace }}
     {{- $clusterDomain := .Values.clusterDomain }}
-    {{- $fullname := include "opensearch.cluster_manager.fullname" . }}
-    {{- $serviceName := include "opensearch.cluster_manager.fullname" . }}
+    {{- $fullname := include "common.names.fullname" . }}
+    {{- $serviceName := include "common.names.fullname" . }}
 
     curl -X PUT -H 'Content-Type: application/json' \
       --cacert /usr/share/opensearch/config/ca.crt \

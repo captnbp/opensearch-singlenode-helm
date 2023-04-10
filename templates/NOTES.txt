@@ -2,12 +2,12 @@ CHART NAME: {{ .Chart.Name }}
 CHART VERSION: {{ .Chart.Version }}
 APP VERSION: {{ .Chart.AppVersion }}
 
-{{- if contains .Values.cluster_manager.service.type "LoadBalancer" }}
+{{- if contains .Values.opensearch.service.type "LoadBalancer" }}
 
 -------------------------------------------------------------------------------
  WARNING
 
-    By specifying "cluster_manager.service.type=LoadBalancer" you have most likely
+    By specifying "opensearch.service.type=LoadBalancer" you have most likely
     exposed the Opensearch service externally.
 
     Please note that Opensearch does not implement a authentication
@@ -28,7 +28,7 @@ APP VERSION: {{ .Chart.AppVersion }}
     below:
 
       kubectl logs --namespace {{ .Release.Namespace }} $(kubectl get --namespace {{ .Release.Namespace }} \
-        pods -l app={{ template "common.names.name" . }},role=cluster_manager -o jsonpath='{.items[0].metadata.name}') \
+        pods -l app={{ template "common.names.name" . }},role=opensearch -o jsonpath='{.items[0].metadata.name}') \
 	opensearch
 
     You can adapt the Kernel parameters on you cluster as described in the
@@ -89,25 +89,25 @@ In order to replicate the container startup scripts execute this command:
 
 {{- else }}
 
-  Opensearch can be accessed within the cluster on port {{ .Values.cluster_manager.service.port }} at {{ template "opensearch.cluster_manager.fullname" . }}.{{ .Release.Namespace }}.svc.{{ .Values.clusterDomain }}
+  Opensearch can be accessed within the cluster on port {{ .Values.opensearch.service.port }} at {{ template "common.names.fullname" . }}.{{ .Release.Namespace }}.svc.{{ .Values.clusterDomain }}
 
   To access from outside the cluster execute the following commands:
 
-{{- if contains "NodePort" .Values.cluster_manager.service.type }}
+{{- if contains "NodePort" .Values.opensearch.service.type }}
 
-    export NODE_PORT=$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.spec.ports[0].nodePort}" services {{ template "opensearch.cluster_manager.fullname" . }})
+    export NODE_PORT=$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.spec.ports[0].nodePort}" services {{ template "common.names.fullname" . }})
     export NODE_IP=$(kubectl get nodes --namespace {{ .Release.Namespace }} -o jsonpath="{.items[0].status.addresses[0].address}")
     curl http://$NODE_IP:$NODE_PORT/
-{{- else if contains "LoadBalancer" .Values.cluster_manager.service.type }}
+{{- else if contains "LoadBalancer" .Values.opensearch.service.type }}
 
   NOTE: It may take a few minutes for the LoadBalancer IP to be available.
-        Watch the status with: 'kubectl get svc --namespace {{ .Release.Namespace }} -w {{ template "opensearch.cluster_manager.fullname" . }}'
+        Watch the status with: 'kubectl get svc --namespace {{ .Release.Namespace }} -w {{ template "common.names.fullname" . }}'
 
-    export SERVICE_IP=$(kubectl get svc --namespace {{ .Release.Namespace }} {{ template "opensearch.cluster_manager.fullname" . }} --template "{{ "{{ range (index .status.loadBalancer.ingress 0) }}{{ . }}{{ end }}" }}")
-    curl http://$SERVICE_IP:{{ .Values.cluster_manager.service.port }}/
-{{- else if contains "ClusterIP"  .Values.cluster_manager.service.type }}
+    export SERVICE_IP=$(kubectl get svc --namespace {{ .Release.Namespace }} {{ template "common.names.fullname" . }} --template "{{ "{{ range (index .status.loadBalancer.ingress 0) }}{{ . }}{{ end }}" }}")
+    curl http://$SERVICE_IP:{{ .Values.opensearch.service.port }}/
+{{- else if contains "ClusterIP"  .Values.opensearch.service.type }}
 
-    kubectl port-forward --namespace {{ .Release.Namespace }} svc/{{ template "opensearch.cluster_manager.fullname" . }} {{ .Values.cluster_manager.service.port }}:9200 &
+    kubectl port-forward --namespace {{ .Release.Namespace }} svc/{{ template "common.names.fullname" . }} {{ .Values.opensearch.service.port }}:9200 &
     curl http://127.0.0.1:9200/
 {{- end }}
 

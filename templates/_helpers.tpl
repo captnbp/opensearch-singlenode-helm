@@ -9,35 +9,22 @@ Return the proper ES image name
 
 
 {{/*
-Create a default fully qualified cluster_manager name.
-We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
+Returns true if at least one opensearch-elegible node replica has been configured.
 */}}
-{{- define "opensearch.cluster_manager.fullname" -}}
-{{- if .Values.cluster_manager.fullnameOverride -}}
-{{- .Values.cluster_manager.fullnameOverride | trunc 63 | trimSuffix "-" -}}
-{{- else -}}
-{{- printf "%s-cluster-manager" (include "common.names.fullname" .) | trunc 63 | trimSuffix "-" -}}
-{{- end -}}
-{{- end -}}
-
-
-{{/*
-Returns true if at least one cluster_manager-elegible node replica has been configured.
-*/}}
-{{- define "opensearch.cluster_manager.enabled" -}}
-{{- if or .Values.cluster_manager.autoscaling.enabled (gt (int .Values.cluster_manager.replicaCount) 0) -}}
+{{- define "opensearch.opensearch.enabled" -}}
+{{- if or .Values.opensearch.autoscaling.enabled (gt (int .Values.opensearch.replicaCount) 0) -}}
     {{- true -}}
 {{- end -}}
 {{- end -}}
 
 {{/*
- Create the name of the cluster_manager service account to use
+ Create the name of the opensearch service account to use
  */}}
-{{- define "opensearch.cluster_manager.serviceAccountName" -}}
-{{- if .Values.cluster_manager.serviceAccount.create -}}
-    {{ default (include "opensearch.cluster_manager.fullname" .) .Values.cluster_manager.serviceAccount.name }}
+{{- define "opensearch.opensearch.serviceAccountName" -}}
+{{- if .Values.opensearch.serviceAccount.create -}}
+    {{ default (include "common.names.fullname" .) .Values.opensearch.serviceAccount.name }}
 {{- else -}}
-    {{ default "default" .Values.cluster_manager.serviceAccount.name }}
+    {{ default "default" .Values.opensearch.serviceAccount.name }}
 {{- end -}}
 {{- end -}}
 
@@ -85,7 +72,7 @@ Return the proper image name (for the init container volume-permissions image)
 {{/*
 Return the proper Storage Class
 Usage:
-{{ include "opensearch.storageClass" (dict "global" .Values.global "local" .Values.cluster_manager) }}
+{{ include "opensearch.storageClass" (dict "global" .Values.global "local" .Values.opensearch) }}
 */}}
 {{- define "opensearch.storageClass" -}}
 {{/*
@@ -160,14 +147,14 @@ Return the proper Opensearch securityadmin image name
 {{- end -}}
 
 {{/*
-Return the opensearch TLS credentials secret for cluster_manager nodes.
+Return the opensearch TLS credentials secret for opensearch nodes.
 */}}
-{{- define "opensearch.cluster_manager.http.tlsSecretName" -}}
-{{- $secretName := .Values.security.tls.http.cluster_manager.existingSecret -}}
+{{- define "opensearch.opensearch.http.tlsSecretName" -}}
+{{- $secretName := .Values.security.tls.http.opensearch.existingSecret -}}
 {{- if $secretName -}}
     {{- printf "%s" (tpl $secretName $) -}}
 {{- else -}}
-    {{- printf "%s-http-crt" (include "opensearch.cluster_manager.fullname" .) -}}
+    {{- printf "%s-http-crt" (include "common.names.fullname" .) -}}
 {{- end -}}
 {{- end -}}
 
@@ -181,14 +168,14 @@ Return true if a TLS credentials secret object should be created
 {{- end -}}
 
 {{/*
-Return the opensearch TLS credentials secret for cluster_manager nodes.
+Return the opensearch TLS credentials secret for opensearch nodes.
 */}}
-{{- define "opensearch.cluster_manager.transport.tlsSecretName" -}}
-{{- $secretName := .Values.security.tls.transport.cluster_manager.existingSecret -}}
+{{- define "opensearch.opensearch.transport.tlsSecretName" -}}
+{{- $secretName := .Values.security.tls.transport.opensearch.existingSecret -}}
 {{- if $secretName -}}
     {{- printf "%s" (tpl $secretName $) -}}
 {{- else -}}
-    {{- printf "%s-transport-crt" (include "opensearch.cluster_manager.fullname" .) -}}
+    {{- printf "%s-transport-crt" (include "common.names.fullname" .) -}}
 {{- end -}}
 {{- end -}}
 
@@ -239,6 +226,27 @@ Return true if a S3 credentials secret object should be created
 {{- end -}}
 
 {{/*
+Return the Opensearch keystore secret name
+*/}}
+{{- define "opensearch.extraSecretsKeystore.secretName" -}}
+{{- if .Values.extraSecretsKeystore.existingSecret -}}
+{{- $secretName := .Values.extraSecretsKeystore.existingSecret -}}
+    {{- printf "%s" (tpl $secretName $) -}}
+{{- else -}}
+    {{- printf "%s-keystore" (include "common.names.fullname" .) -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if a keystore secret object should be created
+*/}}
+{{- define "opensearch.extraSecretsKeystore.createSecret" -}}
+{{- if not .Values.extraSecretsKeystore.existingSecret }}
+    {{- true -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
 Return the Opensearch authentication credentials secret name
 */}}
 {{- define "opensearch.security.http.issuerName" -}}
@@ -266,18 +274,18 @@ Return the Opensearch authentication credentials secret name
 Returns true if at least 1 existing secret was provided
 */}}
 {{- define "opensearch.security.http.tlsSecretsProvided" -}}
-{{- $clusterManagerSecret :=.Values.security.tls.http.cluster_manager.existingSecret -}}
+{{- $clusterManagerSecret :=.Values.security.tls.http.opensearch.existingSecret -}}
 {{- if $clusterManagerSecret }}
     {{- true -}}
 {{- end -}}
 {{- end -}}
 
-{{/* Validate values of Opensearch - Existing secret not provided for cluster_manager nodes */}}
-{{- define "opensearch.validateValues.security.http.missingTlsSecrets.cluster_manager" -}}
-{{- if and (include "opensearch.security.http.tlsSecretsProvided" .) (not .Values.security.tls.http.cluster_manager.existingSecret) -}}
-opensearch: security.tls.http.cluster_manager.existingSecret
-    Missing secret containing the TLS certificates for the Opensearch cluster_manager nodes.
-    Provide the certificates using --set .Values.security.tls.http.cluster_manager.existingSecret="my-secret".
+{{/* Validate values of Opensearch - Existing secret not provided for opensearch nodes */}}
+{{- define "opensearch.validateValues.security.http.missingTlsSecrets.opensearch" -}}
+{{- if and (include "opensearch.security.http.tlsSecretsProvided" .) (not .Values.security.tls.http.opensearch.existingSecret) -}}
+opensearch: security.tls.http.opensearch.existingSecret
+    Missing secret containing the TLS certificates for the Opensearch opensearch nodes.
+    Provide the certificates using --set .Values.security.tls.http.opensearch.existingSecret="my-secret".
 {{- end -}}
 {{- end -}}
 
@@ -289,7 +297,7 @@ opensearch: security.tls.transport
     Two different mechanisms can be used:
         - Provide an existing secret containing the TLS certificates for each role
         - Enable using auto-generated cert-manager certificates with `security.tls.http.autoGenerated=true`
-    Existing secrets containing PKCS8 PEM certificates can be provided using --set Values.security.tls.http.cluster_manager.existingSecret=cluster-manager-certs
+    Existing secrets containing PKCS8 PEM certificates can be provided using --set Values.security.tls.http.opensearch.existingSecret=opensearch-certs
 {{- end -}}
 {{- end -}}
 
@@ -297,18 +305,18 @@ opensearch: security.tls.transport
 Returns true if at least 1 existing secret was provided
 */}}
 {{- define "opensearch.security.transport.tlsSecretsProvided" -}}
-{{- $clusterManagerSecret :=.Values.security.tls.transport.cluster_manager.existingSecret -}}
+{{- $clusterManagerSecret :=.Values.security.tls.transport.opensearch.existingSecret -}}
 {{- if $clusterManagerSecret }}
     {{- true -}}
 {{- end -}}
 {{- end -}}
 
-{{/* Validate values of Opensearch - Existing secret not provided for cluster_manager nodes */}}
-{{- define "opensearch.validateValues.security.transport.missingTlsSecrets.cluster_manager" -}}
-{{- if and (include "opensearch.security.transport.tlsSecretsProvided" .) (not .Values.security.tls.transport.cluster_manager.existingSecret) -}}
-opensearch: security.tls.transport.cluster_manager.existingSecret
-    Missing secret containing the TLS certificates for the Opensearch cluster_manager nodes.
-    Provide the certificates using --set .Values.security.tls.transport.cluster_manager.existingSecret="my-secret".
+{{/* Validate values of Opensearch - Existing secret not provided for opensearch nodes */}}
+{{- define "opensearch.validateValues.security.transport.missingTlsSecrets.opensearch" -}}
+{{- if and (include "opensearch.security.transport.tlsSecretsProvided" .) (not .Values.security.tls.transport.opensearch.existingSecret) -}}
+opensearch: security.tls.transport.opensearch.existingSecret
+    Missing secret containing the TLS certificates for the Opensearch opensearch nodes.
+    Provide the certificates using --set .Values.security.tls.transport.opensearch.existingSecret="my-secret".
 {{- end -}}
 {{- end -}}
 
@@ -320,7 +328,7 @@ opensearch: security.tls.transport
     Two different mechanisms can be used:
         - Provide an existing secret containing the TLS certificates for each role
         - Enable using auto-generated cert-manager certificates with `security.tls.transport.autoGenerated=true`
-    Existing secrets containing PKCS8 PEM certificates can be provided using --set Values.security.tls.transport.cluster_manager.existingSecret=cluster-manager-certs
+    Existing secrets containing PKCS8 PEM certificates can be provided using --set Values.security.tls.transport.opensearch.existingSecret=opensearch-certs
 {{- end -}}
 {{- end -}}
 
@@ -330,9 +338,9 @@ Compile all warnings into a single message, and call fail.
 {{- define "opensearch.validateValues" -}}
 {{- $messages := list -}}
 {{- $messages := append $messages (include "opensearch.validateValues.security.tls.http" .) -}}
-{{- $messages := append $messages (include "opensearch.validateValues.security.http.missingTlsSecrets.cluster_manager" .) -}}
+{{- $messages := append $messages (include "opensearch.validateValues.security.http.missingTlsSecrets.opensearch" .) -}}
 {{- $messages := append $messages (include "opensearch.validateValues.security.tls.transport" .) -}}
-{{- $messages := append $messages (include "opensearch.validateValues.security.transport.missingTlsSecrets.cluster_manager" .) -}}
+{{- $messages := append $messages (include "opensearch.validateValues.security.transport.missingTlsSecrets.opensearch" .) -}}
 {{- $messages := without $messages "" -}}
 {{- $message := join "\n" $messages -}}
 

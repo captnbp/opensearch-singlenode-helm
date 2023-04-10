@@ -31,10 +31,10 @@ lint:
   extends:
     - .template:helm:lint
   variables:
-    CHART_NAME: opensearch-standalone
+    CHART_NAME: opensearch-singlenode
 
 publish:
   extends:
     - .template:helm:publish
   variables:
-    CHART_NAME: opensearch-standalone
+    CHART_NAME: opensearch-singlenode

@@ -117,18 +117,9 @@ security:
       ## @param security.tls.http.size Size is the key bit size of the corresponding private key for this certificate. If algorithm is set to RSA, valid values are 2048, 4096 or 8192, and will default to 2048 if not specified. If algorithm is set to ECDSA, valid values are 256, 384 or 521, and will default to 256 if not specified. If algorithm is set to Ed25519, Size is ignored. No other values are allowed. 
       size: 2048
 
-      ## @param security.tls.http.cluster_manager.existingSecret Existing secret containing the certificates for the cluster_manager nodes
-      ## @param security.tls.http.data.existingSecret Existing secret containing the certificates for the data nodes
-      ## @param security.tls.http.ingest.existingSecret Existing secret containing the certificates for the ingest nodes
-      ## @param security.tls.http.coordinating.existingSecret Existing secret containing the certificates for the coordinating nodes
+      ## @param security.tls.http.opensearch.existingSecret Existing secret containing the certificates for the opensearch nodes
       ##
-      cluster_manager:
-        existingSecret: ""
-      data:
-        existingSecret: ""
-      ingest:
-        existingSecret: ""
-      coordinating:
+      opensearch:
         existingSecret: ""
       ## @param security.tls.http.keyPassword Password to access the PEM key when they are password-protected.
       ##
@@ -175,18 +166,9 @@ security:
       ## @param security.tls.transport.size Size is the key bit size of the corresponding private key for this certificate. If algorithm is set to RSA, valid values are 2048, 4096 or 8192, and will default to 2048 if not specified. If algorithm is set to ECDSA, valid values are 256, 384 or 521, and will default to 256 if not specified. If algorithm is set to Ed25519, Size is ignored. No other values are allowed. 
       size: 2048
 
-      ## @param security.tls.transport.cluster_manager.existingSecret Existing secret containing the certificates for the cluster_manager nodes
-      ## @param security.tls.transport.data.existingSecret Existing secret containing the certificates for the data nodes
-      ## @param security.tls.transport.ingest.existingSecret Existing secret containing the certificates for the ingest nodes
-      ## @param security.tls.transport.coordinating.existingSecret Existing secret containing the certificates for the coordinating nodes
+      ## @param security.tls.transport.opensearch.existingSecret Existing secret containing the certificates for the opensearch nodes
       ##
-      cluster_manager:
-        existingSecret: ""
-      data:
-        existingSecret: ""
-      ingest:
-        existingSecret: ""
-      coordinating:
+      opensearch:
         existingSecret: ""
       ## @param security.tls.transport.keyPassword Password to access the PEM key when they are password-protected.
       ##
@@ -329,63 +311,63 @@ extraEnvVarsSecret: ""
 
 ## @section Master parameters
 
-## Opensearch cluster_manager node parameters
+## Opensearch opensearch node parameters
 ##
-cluster_manager:
-  ## @param cluster_manager.fullnameOverride String to fully override opensearch.cluster_manager.fullname template with a string
+opensearch:
+  ## @param opensearch.fullnameOverride String to fully override common.names.fullname template with a string
   ##
   fullnameOverride: ""
-  ## @param cluster_manager.replicaCount Desired number of Opensearch cluster_manager nodes. Consider using an odd number of cluster_manager nodes to prevent "split brain" situation.  See: https://opensearch.org/docs/latest/opensearch/cluster/
+  ## @param opensearch.replicaCount Desired number of Opensearch opensearch nodes. Consider using an odd number of opensearch nodes to prevent "split brain" situation.  See: https://opensearch.org/docs/latest/opensearch/cluster/
   ##
   replicaCount: 1
-  ## Update strategy for Opensearch cluster_manager statefulset
+  ## Update strategy for Opensearch opensearch statefulset
   ## ref: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#update-strategies
-  ## @param cluster_manager.updateStrategy.type Update strategy for Master statefulset
+  ## @param opensearch.updateStrategy.type Update strategy for Master statefulset
   ##
   updateStrategy:
     type: RollingUpdate
-  ## @param cluster_manager.hostAliases Add deployment host aliases
+  ## @param opensearch.hostAliases Add deployment host aliases
   ## https://kubernetes.io/docs/concepts/services-networking/add-entries-to-pod-etc-hosts-with-host-aliases/
   ##
   hostAliases: []
-  ## @param cluster_manager.schedulerName Name of the k8s scheduler (other than default)
+  ## @param opensearch.schedulerName Name of the k8s scheduler (other than default)
   ## ref: https://kubernetes.io/docs/tasks/administer-cluster/configure-multiple-schedulers/
   ##
   schedulerName: ""
   ##
-  ## @param cluster_manager.heapSize Master-eligible node heap size
+  ## @param opensearch.heapSize Master-eligible node heap size
   ##
   heapSize: 128m
-  ## @param cluster_manager.podAnnotations Annotations for cluster_manager pods.
+  ## @param opensearch.podAnnotations Annotations for opensearch pods.
   ##
   podAnnotations: {}
-  ## @param cluster_manager.podLabels Extra labels to add to Pod
+  ## @param opensearch.podLabels Extra labels to add to Pod
   ##
   podLabels: {}
-  ## Pod Security Context for cluster_manager pods.
+  ## Pod Security Context for opensearch pods.
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
-  ## @param cluster_manager.securityContext.enabled Enable security context for cluster_manager pods
-  ## @param cluster_manager.securityContext.fsGroup Group ID for the container for cluster_manager pods
-  ## @param cluster_manager.securityContext.runAsUser User ID for the container for cluster_manager pods
+  ## @param opensearch.securityContext.enabled Enable security context for opensearch pods
+  ## @param opensearch.securityContext.fsGroup Group ID for the container for opensearch pods
+  ## @param opensearch.securityContext.runAsUser User ID for the container for opensearch pods
   ##
   securityContext:
     enabled: true
     fsGroup: 1000
     runAsUser: 1000
-  ## Pod Security Context for cluster_manager pods.
+  ## Pod Security Context for opensearch pods.
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
-  ## @param cluster_manager.podSecurityContext.enabled Enable security context for cluster_manager pods
-  ## @param cluster_manager.podSecurityContext.fsGroup Group ID for the container for cluster_manager pods
+  ## @param opensearch.podSecurityContext.enabled Enable security context for opensearch pods
+  ## @param opensearch.podSecurityContext.fsGroup Group ID for the container for opensearch pods
   ##
   podSecurityContext:
     enabled: false
     fsGroup: 1000
   ## Container Security Context for the main container.
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
-  ## @param cluster_manager.containerSecurityContext.enabled Enable security context for the main container
-  ## @param cluster_manager.containerSecurityContext.runAsUser User ID for the container for the main container
-  ## @param cluster_manager.containerSecurityContext.runAsNonRoot Indicates that the container must run as a non-root user
-  ## @param cluster_manager.containerSecurityContext.allowPrivilegeEscalation Controls whether a process can gain more privileges than its parent process
+  ## @param opensearch.containerSecurityContext.enabled Enable security context for the main container
+  ## @param opensearch.containerSecurityContext.runAsUser User ID for the container for the main container
+  ## @param opensearch.containerSecurityContext.runAsNonRoot Indicates that the container must run as a non-root user
+  ## @param opensearch.containerSecurityContext.allowPrivilegeEscalation Controls whether a process can gain more privileges than its parent process
   ##
   containerSecurityContext:
     enabled: true
@@ -393,19 +375,19 @@ cluster_manager:
     runAsNonRoot: true
     allowPrivilegeEscalation: false
 
-  ## @param cluster_manager.podAffinityPreset Master-eligible Pod affinity preset. Ignored if `affinity` is set. Allowed values: `soft` or `hard`
+  ## @param opensearch.podAffinityPreset Master-eligible Pod affinity preset. Ignored if `affinity` is set. Allowed values: `soft` or `hard`
   ## ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity
   ##
   podAffinityPreset: ""
-  ## @param cluster_manager.podAntiAffinityPreset Master-eligible Pod anti-affinity preset. Ignored if `affinity` is set. Allowed values: `soft` or `hard`
+  ## @param opensearch.podAntiAffinityPreset Master-eligible Pod anti-affinity preset. Ignored if `affinity` is set. Allowed values: `soft` or `hard`
   ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity
   ##
   podAntiAffinityPreset: ""
   ## Node affinity preset. Allowed values: soft, hard
   ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#node-affinity
-  ## @param cluster_manager.nodeAffinityPreset.type Master-eligible Node affinity preset type. Ignored if `affinity` is set. Allowed values: `soft` or `hard`
-  ## @param cluster_manager.nodeAffinityPreset.key Master-eligible Node label key to match Ignored if `affinity` is set.
-  ## @param cluster_manager.nodeAffinityPreset.values Master-eligible Node label values to match. Ignored if `affinity` is set.
+  ## @param opensearch.nodeAffinityPreset.type Master-eligible Node affinity preset type. Ignored if `affinity` is set. Allowed values: `soft` or `hard`
+  ## @param opensearch.nodeAffinityPreset.key Master-eligible Node label key to match Ignored if `affinity` is set.
+  ## @param opensearch.nodeAffinityPreset.values Master-eligible Node label values to match. Ignored if `affinity` is set.
   ##
   nodeAffinityPreset:
     type: ""
@@ -419,35 +401,35 @@ cluster_manager:
     ##   - e2e-az2
     ##
     values: []
-  ## @param cluster_manager.affinity Master-eligible Affinity for pod assignment
+  ## @param opensearch.affinity Master-eligible Affinity for pod assignment
   ## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
   ## Note: podAffinityPreset, podAntiAffinityPreset, and  nodeAffinityPreset will be ignored when it's set
   ##
   affinity: {}
-  ## @param cluster_manager.priorityClassName Master pods Priority Class Name
+  ## @param opensearch.priorityClassName Master pods Priority Class Name
   ## ref: https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/#priorityclass
   ##
   priorityClassName: ""
-  ## @param cluster_manager.nodeSelector Master-eligible Node labels for pod assignment
+  ## @param opensearch.nodeSelector Master-eligible Node labels for pod assignment
   ## Ref: https://kubernetes.io/docs/user-guide/node-selection/
   ##
   nodeSelector: {}
-  ## @param cluster_manager.tolerations Master-eligible Tolerations for pod assignment
+  ## @param opensearch.tolerations Master-eligible Tolerations for pod assignment
   ## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
   ##
   tolerations: []
-  ## @param cluster_manager.topologySpreadConstraints Topology Spread Constraints for pod assignment spread across your cluster among failure-domains. Evaluated as a template
+  ## @param opensearch.topologySpreadConstraints Topology Spread Constraints for pod assignment spread across your cluster among failure-domains. Evaluated as a template
   ## Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/#spread-constraints-for-pods
   ##
   topologySpreadConstraints: []
-  ## Opensearch cluster_manager container's resource requests and limits
+  ## Opensearch opensearch container's resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
   ## We usually recommend not to specify default resources and to leave this as a conscious
   ## choice for the user. This also increases chances charts run on environments with little
   ## resources, such as Minikube. If you do want to specify resources, uncomment the following
   ## lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  ## @param cluster_manager.resources.limits The resources limits for the container
-  ## @param cluster_manager.resources.requests [object] The requested resources for the container
+  ## @param opensearch.resources.limits The resources limits for the container
+  ## @param opensearch.resources.requests [object] The requested resources for the container
   ##
   resources:
     ## Example:
@@ -458,14 +440,14 @@ cluster_manager:
     requests:
       cpu: 25m
       memory: 256Mi
-  ## Opensearch cluster_manager container's startup probe
+  ## Opensearch opensearch container's startup probe
   ## ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#container-probes
-  ## @param cluster_manager.startupProbe.enabled Enable/disable the startup probe (cluster_manager nodes pod)
-  ## @param cluster_manager.startupProbe.initialDelaySeconds Delay before startup probe is initiated (cluster_manager nodes pod)
-  ## @param cluster_manager.startupProbe.periodSeconds How often to perform the probe (cluster_manager nodes pod)
-  ## @param cluster_manager.startupProbe.timeoutSeconds When the probe times out (cluster_manager nodes pod)
-  ## @param cluster_manager.startupProbe.successThreshold Minimum consecutive successes for the probe to be considered successful after having failed (cluster_manager nodes pod)
-  ## @param cluster_manager.startupProbe.failureThreshold Minimum consecutive failures for the probe to be considered failed after having succeeded
+  ## @param opensearch.startupProbe.enabled Enable/disable the startup probe (opensearch nodes pod)
+  ## @param opensearch.startupProbe.initialDelaySeconds Delay before startup probe is initiated (opensearch nodes pod)
+  ## @param opensearch.startupProbe.periodSeconds How often to perform the probe (opensearch nodes pod)
+  ## @param opensearch.startupProbe.timeoutSeconds When the probe times out (opensearch nodes pod)
+  ## @param opensearch.startupProbe.successThreshold Minimum consecutive successes for the probe to be considered successful after having failed (opensearch nodes pod)
+  ## @param opensearch.startupProbe.failureThreshold Minimum consecutive failures for the probe to be considered failed after having succeeded
   ##
   startupProbe:
     enabled: false
@@ -474,14 +456,14 @@ cluster_manager:
     timeoutSeconds: 5
     successThreshold: 1
     failureThreshold: 5
-  ## Opensearch cluster_manager container's liveness probe
+  ## Opensearch opensearch container's liveness probe
   ## ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#container-probes
-  ## @param cluster_manager.livenessProbe.enabled Enable/disable the liveness probe (cluster_manager nodes pod)
-  ## @param cluster_manager.livenessProbe.initialDelaySeconds Delay before liveness probe is initiated (cluster_manager nodes pod)
-  ## @param cluster_manager.livenessProbe.periodSeconds How often to perform the probe (cluster_manager nodes pod)
-  ## @param cluster_manager.livenessProbe.timeoutSeconds When the probe times out (cluster_manager nodes pod)
-  ## @param cluster_manager.livenessProbe.successThreshold Minimum consecutive successes for the probe to be considered successful after having failed (cluster_manager nodes pod)
-  ## @param cluster_manager.livenessProbe.failureThreshold Minimum consecutive failures for the probe to be considered failed after having succeeded
+  ## @param opensearch.livenessProbe.enabled Enable/disable the liveness probe (opensearch nodes pod)
+  ## @param opensearch.livenessProbe.initialDelaySeconds Delay before liveness probe is initiated (opensearch nodes pod)
+  ## @param opensearch.livenessProbe.periodSeconds How often to perform the probe (opensearch nodes pod)
+  ## @param opensearch.livenessProbe.timeoutSeconds When the probe times out (opensearch nodes pod)
+  ## @param opensearch.livenessProbe.successThreshold Minimum consecutive successes for the probe to be considered successful after having failed (opensearch nodes pod)
+  ## @param opensearch.livenessProbe.failureThreshold Minimum consecutive failures for the probe to be considered failed after having succeeded
   ##
   livenessProbe:
     enabled: false
@@ -490,14 +472,14 @@ cluster_manager:
     timeoutSeconds: 5
     successThreshold: 1
     failureThreshold: 5
-  ## Opensearch cluster_manager container's readiness probe
+  ## Opensearch opensearch container's readiness probe
   ## ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#container-probes
-  ## @param cluster_manager.readinessProbe.enabled Enable/disable the readiness probe (cluster_manager nodes pod)
-  ## @param cluster_manager.readinessProbe.initialDelaySeconds Delay before readiness probe is initiated (cluster_manager nodes pod)
-  ## @param cluster_manager.readinessProbe.periodSeconds How often to perform the probe (cluster_manager nodes pod)
-  ## @param cluster_manager.readinessProbe.timeoutSeconds When the probe times out (cluster_manager nodes pod)
-  ## @param cluster_manager.readinessProbe.successThreshold Minimum consecutive successes for the probe to be considered successful after having failed (cluster_manager nodes pod)
-  ## @param cluster_manager.readinessProbe.failureThreshold Minimum consecutive failures for the probe to be considered failed after having succeeded
+  ## @param opensearch.readinessProbe.enabled Enable/disable the readiness probe (opensearch nodes pod)
+  ## @param opensearch.readinessProbe.initialDelaySeconds Delay before readiness probe is initiated (opensearch nodes pod)
+  ## @param opensearch.readinessProbe.periodSeconds How often to perform the probe (opensearch nodes pod)
+  ## @param opensearch.readinessProbe.timeoutSeconds When the probe times out (opensearch nodes pod)
+  ## @param opensearch.readinessProbe.successThreshold Minimum consecutive successes for the probe to be considered successful after having failed (opensearch nodes pod)
+  ## @param opensearch.readinessProbe.failureThreshold Minimum consecutive failures for the probe to be considered failed after having succeeded
   ##
   readinessProbe:
     enabled: true
@@ -506,29 +488,29 @@ cluster_manager:
     timeoutSeconds: 5
     successThreshold: 1
     failureThreshold: 5
-  ## @param cluster_manager.customStartupProbe Override default startup probe
+  ## @param opensearch.customStartupProbe Override default startup probe
   ##
   customStartupProbe: {}
-  ## @param cluster_manager.customLivenessProbe Override default liveness probe
+  ## @param opensearch.customLivenessProbe Override default liveness probe
   ##
   customLivenessProbe: {}
-  ## @param cluster_manager.customReadinessProbe Override default readiness probe
+  ## @param opensearch.customReadinessProbe Override default readiness probe
   ##
   customReadinessProbe: {}
-  ## @param cluster_manager.initContainers Extra init containers to add to the Opensearch cluster_manager pod(s)
+  ## @param opensearch.initContainers Extra init containers to add to the Opensearch opensearch pod(s)
   ##
   initContainers: []
-  ## @param cluster_manager.sidecars Extra sidecar containers to add to the Opensearch cluster_manager pod(s)
+  ## @param opensearch.sidecars Extra sidecar containers to add to the Opensearch opensearch pod(s)
   ##
   sidecars: []
   ## Enable persistence using Persistent Volume Claims
   ## ref: https://kubernetes.io/docs/user-guide/persistent-volumes/
   ##
   persistence:
-    ## @param cluster_manager.persistence.enabled Enable persistence using a `PersistentVolumeClaim`
+    ## @param opensearch.persistence.enabled Enable persistence using a `PersistentVolumeClaim`
     ##
     enabled: true
-    ## @param cluster_manager.persistence.storageClass Persistent Volume Storage Class
+    ## @param opensearch.persistence.storageClass Persistent Volume Storage Class
     ## If defined, storageClassName: <storageClass>
     ## If set to "-", storageClassName: "", which disables dynamic provisioning
     ## If undefined (the default) or set to null, no storageClassName spec is
@@ -536,68 +518,68 @@ cluster_manager:
     ##   GKE, AWS & OpenStack)
     ##
     storageClass: ""
-    ## @param cluster_manager.persistence.existingClaim Existing Persistent Volume Claim
+    ## @param opensearch.persistence.existingClaim Existing Persistent Volume Claim
     ## then accept the value as an existing Persistent Volume Claim to which
     ## the container should be bound
     ##
     existingClaim: ""
-    ## @param cluster_manager.persistence.existingVolume Existing Persistent Volume for use as volume match label selector to the `volumeClaimTemplate`. Ignored when `cluster_manager.persistence.selector` is set.
+    ## @param opensearch.persistence.existingVolume Existing Persistent Volume for use as volume match label selector to the `volumeClaimTemplate`. Ignored when `opensearch.persistence.selector` is set.
     ##
     existingVolume: ""
-    ## @param cluster_manager.persistence.selector Configure custom selector for existing Persistent Volume. Overwrites `cluster_manager.persistence.existingVolume`
+    ## @param opensearch.persistence.selector Configure custom selector for existing Persistent Volume. Overwrites `opensearch.persistence.existingVolume`
     ## selector:
     ##   matchLabels:
     ##     volume:
     ##
     selector: {}
-    ## @param cluster_manager.persistence.annotations Persistent Volume Claim annotations
+    ## @param opensearch.persistence.annotations Persistent Volume Claim annotations
     ##
     annotations: {}
-    ## @param cluster_manager.persistence.accessModes Persistent Volume Access Modes
+    ## @param opensearch.persistence.accessModes Persistent Volume Access Modes
     ##
     accessModes:
       - ReadWriteOnce
-    ## @param cluster_manager.persistence.size Persistent Volume Size
+    ## @param opensearch.persistence.size Persistent Volume Size
     ##
     size: 8Gi
-  ## Service parameters for cluster_manager node(s)
+  ## Service parameters for opensearch node(s)
   ##
   service:
-    ## @param cluster_manager.service.type Kubernetes Service type (cluster_manager nodes)
+    ## @param opensearch.service.type Kubernetes Service type (opensearch nodes)
     ##
     type: ClusterIP
-    ## @param cluster_manager.service.ports.restAPI Opensearch service REST API port
-    ## @param cluster_manager.service.ports.transport Opensearch service transport port
+    ## @param opensearch.service.ports.restAPI Opensearch service REST API port
+    ## @param opensearch.service.ports.transport Opensearch service transport port
     ##
     ports:
       restAPI: 9200
       transport: 9300
-    ## @param cluster_manager.service.nodePorts.restAPI Opensearch service REST API nodeport
-    ## @param cluster_manager.service.nodePorts.transport Opensearch service transport nodeport
+    ## @param opensearch.service.nodePorts.restAPI Opensearch service REST API nodeport
+    ## @param opensearch.service.nodePorts.transport Opensearch service transport nodeport
     ##
     nodePorts:
       restAPI: ""
       transport: ""
-    ## @param cluster_manager.service.annotations Annotations for cluster_manager nodes service
+    ## @param opensearch.service.annotations Annotations for opensearch nodes service
     ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#internal-load-balancer
     ##
     annotations: {}
-    ## @param cluster_manager.service.loadBalancerIP loadBalancerIP if cluster_manager nodes service type is `LoadBalancer`
+    ## @param opensearch.service.loadBalancerIP loadBalancerIP if opensearch nodes service type is `LoadBalancer`
     ## Set the LoadBalancer service type to internal only.
     ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#internal-load-balancer
     ##
     loadBalancerIP: ""
-    ## @param cluster_manager.service.ipFamilyPolicy ipFamilyPolicy for cluster_manager nodes service
+    ## @param opensearch.service.ipFamilyPolicy ipFamilyPolicy for opensearch nodes service
     ## ref: https://kubernetes.io/docs/concepts/services-networking/dual-stack/#services
     ##
     ipFamilyPolicy: PreferDualStack
 
   ## Pods Service Account
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
-  ## @param cluster_manager.serviceAccount.create Specifies whether a ServiceAccount should be created
-  ## @param cluster_manager.serviceAccount.name Name of the service account to use. If not set and create is true, a name is generated using the fullname template.
-  ## @param cluster_manager.serviceAccount.automountServiceAccountToken Automount service account token for the server service account
-  ## @param cluster_manager.serviceAccount.annotations Annotations for service account. Evaluated as a template. Only used if `create` is `true`.
+  ## @param opensearch.serviceAccount.create Specifies whether a ServiceAccount should be created
+  ## @param opensearch.serviceAccount.name Name of the service account to use. If not set and create is true, a name is generated using the fullname template.
+  ## @param opensearch.serviceAccount.automountServiceAccountToken Automount service account token for the server service account
+  ## @param opensearch.serviceAccount.annotations Annotations for service account. Evaluated as a template. Only used if `create` is `true`.
   ##
   serviceAccount:
     create: true
@@ -607,11 +589,11 @@ cluster_manager:
 
   ## Enable HorizontalPodAutoscaler for Opensearch Master pods
   ## ref: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
-  ## @param cluster_manager.autoscaling.enabled Whether enable horizontal pod autoscale
-  ## @param cluster_manager.autoscaling.minReplicas Configure a minimum amount of pods
-  ## @param cluster_manager.autoscaling.maxReplicas Configure a maximum amount of pods
-  ## @param cluster_manager.autoscaling.targetCPU Define the CPU target to trigger the scaling actions (utilization percentage)
-  ## @param cluster_manager.autoscaling.targetMemory Define the memory target to trigger the scaling actions (utilization percentage)
+  ## @param opensearch.autoscaling.enabled Whether enable horizontal pod autoscale
+  ## @param opensearch.autoscaling.minReplicas Configure a minimum amount of pods
+  ## @param opensearch.autoscaling.maxReplicas Configure a maximum amount of pods
+  ## @param opensearch.autoscaling.targetCPU Define the CPU target to trigger the scaling actions (utilization percentage)
+  ## @param opensearch.autoscaling.targetMemory Define the memory target to trigger the scaling actions (utilization percentage)
   ##
   autoscaling:
     enabled: false
@@ -1253,3 +1235,15 @@ s3Snapshots:
           read_timeout: 50s
           ## @param s3Snapshots.config.s3.client.default.use_throttle_retries Whether the client should wait a progressively longer amount of time (exponential backoff) between each successive retry
           use_throttle_retries: true
+
+## @section Extra secrets in Opensearch keystore
+
+extraSecretsKeystore:
+  ## @param extraSecretsKeystore.existingSecret Name of the existing secret containing the entries to add to the Opensearch keystore
+  ##
+  existingSecret: ""
+  ## @param extraSecretsKeystore.secrets Dict of the K/V entries to add to the Opensearch keystore
+  ##
+  secrets: {}
+    # plugins.alerting.destination.email.<sender_name>.username: foo
+    # plugins.alerting.destination.email.<sender_name>.password: bar

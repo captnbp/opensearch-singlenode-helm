@@ -206,7 +206,6 @@ data:
 
         if [[ -f "/usr/share/opensearch/config/opensearch.keystore" ]]; then
             debug "Keystore already exists"
-            continue
         else
             info "Creating Opensearch keystore"
             /usr/share/opensearch/bin/opensearch-keystore create
@@ -214,6 +213,45 @@ data:
         info "Adding S3 credentials on Opensearch keystore for s3.client.default"
         echo $AWS_ACCESS_KEY_ID | /usr/share/opensearch/bin/opensearch-keystore add --stdin s3.client.default.access_key
         echo $AWS_SECRET_ACCESS_KEY | /usr/share/opensearch/bin/opensearch-keystore add --stdin s3.client.default.secret_key
+    }
+
+    ########################
+    # Set extra secrets K/V in Opensearch keystore
+    # Globals:
+    #   OPENSEARCH_*
+    # Arguments:
+    #   None
+    # Returns:
+    #   None
+    #########################
+    setExtraSecrets() {
+        if [[ -f "/usr/share/opensearch/config/opensearch.keystore" ]]; then
+            debug "Keystore already exists"
+        else
+            info "Creating Opensearch keystore"
+            /usr/share/opensearch/bin/opensearch-keystore create
+        fi
+
+        if [[ ! -z "/tmp/keystore-secrets" ]]; then
+            for file in $(ls /tmp/keystore-secrets); do
+                IFS=$'\n'
+                for line in $(cat /tmp/keystore-secrets/${file})
+                do
+                    if [[ "${line}" =~ ^[[:graph:]]*:[[:blank:]][[:graph:]]*$ ]]; then
+                        IFS=': ' read -r KEY VALUE <<< ${line}
+                        info "Adding secret value in Opensearch keystore for ${KEY}"
+                        echo -n ${VALUE} | /usr/share/opensearch/bin/opensearch-keystore add -f --stdin ${KEY}
+                        if [[ $? -eq 0 ]]; then
+                            info "${KEY} added to Opensearch keystore"
+                        else
+                            error "Failed to add ${KEY} to Opensearch keystore"
+                        fi
+                    else
+                        error "Failed to add ${line} to Opensearch keystore: wrong format, should be 'key: value'"
+                    fi
+                done
+            done
+        fi
     }
 
     ########################
