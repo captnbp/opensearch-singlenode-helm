@@ -66,7 +66,7 @@ diagnosticMode:
 image:
   registry: docker.io
   repository: opensearchproject/opensearch
-  tag: "2.6.0"
+  tag: "2.7.0"
   ## Specify a imagePullPolicy
   ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
   ## ref: https://kubernetes.io/docs/user-guide/images/#pre-pulling-images
@@ -145,11 +145,11 @@ security:
         group: "cert-manager.io"
     transport:
       ## @param security.tls.transport.enforceHostnameVerification Whether to verify hostnames on the transport layer.
-      ## Ref: https://opensearch.org/docs/latest/security-plugin/configuration/tls#advanced-hostname-verification-and-dns-lookup
+      ## Ref: https://opensearch.org/docs/latest/security/configuration/tls#advanced-hostname-verification-and-dns-lookup
       ##
       enforceHostnameVerification: false
       ## @param security.tls.transport.resolveHostname Whether to resolve hostnames against DNS on the transport layer. Optional. Default is true. Only works if hostname verification is also enabled.
-      ## Ref: https://opensearch.org/docs/latest/security-plugin/configuration/tls#advanced-hostname-verification-and-dns-lookup
+      ## Ref: https://opensearch.org/docs/latest/security/configuration/tls#advanced-hostname-verification-and-dns-lookup
       ##
       resolveHostname: true
 
@@ -206,34 +206,34 @@ security:
 
 
   ## Audit configuration
-  ## Ref: https://opensearch.org/docs/latest/security-plugin/audit-logs/index/
+  ## Ref: https://opensearch.org/docs/latest/security/audit-logs/index/
   ##
   audit:
     ## @param security.audit.type Audit logs let you track access to your OpenSearch cluster and are useful for compliance purposes or in the aftermath of a security breach. You can configure the categories to be logged, the detail level of the logged messages, and where to store the logs. Possible values: <debug|internal_opensearch|external_opensearch|webhook|log4j>
-    ## Ref: https://opensearch.org/docs/latest/security-plugin/audit-logs/storage-types/
+    ## Ref: https://opensearch.org/docs/latest/security/audit-logs/storage-types/
     type: "internal_opensearch"
     ## @param security.audit.index Specify the target index for storage types internal_opensearch or external_opensearch
-    ## Ref: https://opensearch.org/docs/latest/security-plugin/audit-logs/index/#configure-the-audit-log-index-name
+    ## Ref: https://opensearch.org/docs/latest/security/audit-logs/index/#configure-the-audit-log-index-name
     index: "'security-auditlog-'YYYY.MM.dd"
     ## @param security.audit.ignore_requests You can exclude certain requests from being logged completely, by either configuring actions (for transport requests) and/or HTTP request paths (REST)
-    ## Ref: https://opensearch.org/docs/latest/security-plugin/audit-logs/index/#exclude-requests
+    ## Ref: https://opensearch.org/docs/latest/security/audit-logs/index/#exclude-requests
     ignore_requests: []
     ## @param security.audit.ignore_users By default, the security plugin logs events from all users, but excludes the internal OpenSearch Dashboards server users dashboard and monitoring
-    ## Ref: https://opensearch.org/docs/latest/security-plugin/audit-logs/index/#exclude-users
+    ## Ref: https://opensearch.org/docs/latest/security/audit-logs/index/#exclude-users
     ignore_users: []
       #- dashboard
       #- monitoring
     ## @param security.audit.enable_rest By default, the security plugin logs events on the REST layer
-    ## Ref: https://opensearch.org/docs/latest/security-plugin/audit-logs/index/#disable-rest-or-the-transport-layer
+    ## Ref: https://opensearch.org/docs/latest/security/audit-logs/index/#disable-rest-or-the-transport-layer
     enable_rest: true
     ## @param security.audit.enable_transport By default, the security plugin logs events on the transport layer
-    ## Ref: https://opensearch.org/docs/latest/security-plugin/audit-logs/index/#disable-rest-or-the-transport-layer
+    ## Ref: https://opensearch.org/docs/latest/security/audit-logs/index/#disable-rest-or-the-transport-layer
     enable_transport: true
     ## @param security.audit.resolve_indices By default, the security plugin logs all indices affected by a request. Because index names can be aliases and contain wildcards/date patterns, the security plugin logs the index name that the user submitted and the actual index name to which it resolves.
-    ## Ref: https://opensearch.org/docs/latest/security-plugin/audit-logs/index/#log-index-names
+    ## Ref: https://opensearch.org/docs/latest/security/audit-logs/index/#log-index-names
     resolve_indices: true
     ## @param security.audit.config Configure audit setting
-    ## Ref: https://opensearch.org/docs/latest/security-plugin/audit-logs/storage-types/
+    ## Ref: https://opensearch.org/docs/latest/security/audit-logs/storage-types/
     config: {}
 
 ## Opensearch cluster name
@@ -248,7 +248,7 @@ containerPorts:
   transport: 9300
 ## @param plugins Comma, semi-colon or space separated list of plugins to install at initialization
 ##
-plugins: "repository-s3,https://github.com/aiven/prometheus-exporter-plugin-for-opensearch/releases/download/2.6.0.0/prometheus-exporter-2.6.0.0.zip"
+plugins: "repository-s3,https://github.com/aiven/prometheus-exporter-plugin-for-opensearch/releases/download/2.7.0.0/prometheus-exporter-2.7.0.0.zip"
 
 ## @param networkHost Network interface to bind (ex: "0.0.0.0", "::" [_local_, _site_])
 ##
@@ -1102,7 +1102,7 @@ securityadmin:
   extraVolumeMounts: []
 
   ## OpenSearch has its own security plugin for authentication and access control. The plugin provides numerous features to help you secure your cluster.
-  ## ref: https://opensearch.org/docs/latest/security-plugin/configuration/yaml/
+  ## ref: https://opensearch.org/docs/latest/security/configuration/yaml/
   securityConfig:
     # enabled: true
     # admin:
@@ -1112,13 +1112,13 @@ securityadmin:
     path: "/usr/share/opensearch/plugins/opensearch-security/securityconfig"
 
     ## @param securityadmin.securityConfig.internal_users This file contains any initial users that you want to add to the security plugin’s internal user database.
-    ## ref: https://opensearch.org/docs/latest/security-plugin/configuration/yaml/#internal_usersyml
+    ## ref: https://opensearch.org/docs/latest/security/configuration/yaml/#internal_usersyml
     internal_users: {}
     ## @param securityadmin.securityConfig.allowlist You can use allowlist.yml to add any endpoints and HTTP requests to a list of allowed endpoints and requests. If enabled, all users except the super admin are allowed access to only the specified endpoints and HTTP requests, and all other HTTP requests associated with the endpoint are denied. For example, if GET _cluster/settings is added to the allow list, users cannot submit PUT requests to _cluster/settings to update cluster settings.
-    ## ref: https://opensearch.org/docs/latest/security-plugin/configuration/yaml/#allowlistyml
+    ## ref: https://opensearch.org/docs/latest/security/configuration/yaml/#allowlistyml
     allowlist: {}
 
-    ## ref: https://opensearch.org/docs/latest/security-plugin/configuration/configuration/
+    ## ref: https://opensearch.org/docs/latest/security/configuration/configuration/
     config:
       dynamic:
         kibana:
@@ -1129,7 +1129,7 @@ securityadmin:
           ## @param securityadmin.securityConfig.config.dynamic.kibana.index Must match the name of the OpenSearch Dashboards index from opensearch_dashboards.yml
           index: ".opensearch_dashboards"
         authc:
-          ## ref: https://opensearch.org/docs/latest/security-plugin/configuration/configuration/#http-basic
+          ## ref: https://opensearch.org/docs/latest/security/configuration/configuration/#http-basic
           basic_internal_auth_domain:
             ## @param securityadmin.securityConfig.config.dynamic.authc.basic_internal_auth_domain.http_enabled 
             http_enabled: true
@@ -1181,19 +1181,19 @@ securityadmin:
 
 
     ## @param securityadmin.securityConfig.roles This file contains any initial roles that you want to add to the security plugin. Aside from some metadata, the default file is empty, because the security plugin has a number of static roles that it adds automatically.
-    ## ref: https://opensearch.org/docs/latest/security-plugin/configuration/yaml/#rolesyml
+    ## ref: https://opensearch.org/docs/latest/security/configuration/yaml/#rolesyml
     roles: {}
     ## @param securityadmin.securityConfig.roles_mapping This file contains any initial role mappings
-    ## ref: https://opensearch.org/docs/latest/security-plugin/configuration/yaml/#roles_mappingyml
+    ## ref: https://opensearch.org/docs/latest/security/configuration/yaml/#roles_mappingyml
     roles_mapping: {}
     ## @param securityadmin.securityConfig.action_groups This file contains any initial action groups that you want to add to the security plugin.
-    ## ref: https://opensearch.org/docs/latest/security-plugin/configuration/yaml/#action_groupsyml
+    ## ref: https://opensearch.org/docs/latest/security/configuration/yaml/#action_groupsyml
     action_groups: {}
     ## @param securityadmin.securityConfig.tenants You can use this file to specify and add any number of OpenSearch Dashboards tenants to your OpenSearch cluster.
-    ## ref: https://opensearch.org/docs/latest/security-plugin/configuration/yaml/#tenantsyml
+    ## ref: https://opensearch.org/docs/latest/security/configuration/yaml/#tenantsyml
     tenants: {}
     ## @param securityadmin.securityConfig.nodes_dn This file lets you add certificates’ distinguished names (DNs) an allow list to enable communication between any number of nodes and/or clusters.
-    ## ref: https://opensearch.org/docs/latest/security-plugin/configuration/yaml/#nodes_dnyml
+    ## ref: https://opensearch.org/docs/latest/security/configuration/yaml/#nodes_dnyml
     nodes_dn: {}
 
 ## @section S3 Snapshot parameters

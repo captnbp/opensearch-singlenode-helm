@@ -42,13 +42,6 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- end -}}
 
 {{/*
-Return the proper Opensearch exporter image name
-*/}}
-{{- define "opensearch.metrics.image" -}}
-{{ include "common.images.image" (dict "imageRoot" .Values.metrics.image "global" .Values.global) }}
-{{- end -}}
-
-{{/*
 Return the proper sysctl image name
 */}}
 {{- define "opensearch.sysctl.image" -}}
