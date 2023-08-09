@@ -38,4 +38,4 @@ sources:
   - https://github.com/captnbp/opensearch-singlenode-helm
   - https://github.com/opensearch-project
   - https://opensearch.org/
-version: 1.0.3
+version: 1.0.4
