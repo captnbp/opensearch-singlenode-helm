@@ -8,8 +8,6 @@ metadata:
     {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
     {{- end }}
     app.kubernetes.io/component: opensearch
-    ## Istio Labels: https://istio.io/docs/ops/deployment/requirements/
-    app: opensearch
 spec:
   updateStrategy:
     type: {{ .Values.opensearch.updateStrategy.type }}
@@ -28,8 +26,6 @@ spec:
     metadata:
       labels: {{- include "common.labels.standard" . | nindent 8 }}
         app.kubernetes.io/component: opensearch
-        ## Istio Labels: https://istio.io/docs/ops/deployment/requirements/
-        app: opensearch
         {{- if .Values.opensearch.podLabels }}
         {{- include "common.tplvalues.render" (dict "value" .Values.opensearch.podLabels "context" $) | nindent 8 }}
         {{- end }}
